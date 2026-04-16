@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Monara
 
-## Getting Started
+> A calm financial planner for everyday humans and tiny businesses.
 
-First, run the development server:
+Monara is a warm, unhurried planner that pairs personal spending with small-business cashflow. Plain language, soft edges, the rigor of a real planner humming underneath. This repo is the marketing + waitlist site — the onramp for early access.
+
+---
+
+## Stack
+
+| | |
+| --- | --- |
+| Framework | Next.js `16.2` (App Router) |
+| Runtime | React `19.2` + React Compiler |
+| Language | TypeScript `5` |
+| Styling | Tailwind CSS `v4` (CSS-native `@theme`) |
+| Icons | `lucide-react` |
+| Fonts | Bricolage Grotesque + IBM Plex Mono (via `next/font/google`) |
+| Package manager | Yarn `1.22` |
+
+> ⚠️  This is not the Next.js you know. Per `AGENTS.md`, this version ships breaking changes against older API conventions. When in doubt, read the guides under `node_modules/next/dist/docs/` before writing code.
+
+---
+
+## Getting started
 
 ```bash
-npm run dev
-# or
+yarn install
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open <http://localhost:3000>.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Other scripts:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+yarn build     # production build
+yarn start     # run the production build
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Project structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+├── app/
+│   ├── globals.css          # Tailwind v4 theme + custom utilities/animations
+│   ├── layout.tsx           # Root layout, font loading, <body> shell
+│   └── page.tsx             # Landing page — composes the home sections
+└── components/
+    └── ui_components/
+        └── home/
+            ├── nav.tsx      # Top navigation (wordmark + links + CTA)
+            ├── hero.tsx     # Hero + product monitor card
+            ├── stats.tsx    # "Signals" spec-sheet strip
+            ├── features.tsx # Editorial feature list
+            ├── waitlist.tsx # Early-access signup
+            └── footer.tsx   # Four-column footer
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+docs/
+└── theme.md                 # Design tokens & semantic roles reference
 
-## Deploy on Vercel
+public/                      # Static assets
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Landing-page flow on `/`:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+Hero → Stats → Features → Waitlist → Footer
+```
+
+---
+
+## Design system
+
+**Aesthetic:** midnight premium — a deep near-black canvas lit by a warm peach glow, with mint for live/success states. Characterful grotesk display type paired with a mono face for data and spec labels.
+
+**Palette (raw):** `night`, `night-2`, `night-3` · `bone`, `bone-muted`, `bone-dim` · `peach`, `peach-deep` · `mint`, `mint-deep` · `plum` · `danger`
+
+**Semantic roles:** `primary` / `secondary` / `accent` / `background` / `foreground` / `surface` / `surface-elevated` / `muted` / `muted-foreground` / `card` / `card-foreground` / `border` / `input` / `ring` / `success` / `destructive`.
+
+Each semantic token is a `var(--color-<raw>)` reference — recolor the palette and every usage cascades.
+
+**Typography tokens:** `--font-sans` (Bricolage Grotesque), `--font-mono` (IBM Plex Mono).
+
+**Custom utilities:** `glow-peach`, `glow-mint`, `bg-grid-dark`.
+**Custom animations:** `animate-rise`, `animate-float-y-slow`, `animate-pulse-dot`, `animate-glow-pulse`.
+
+Full reference and usage examples: **[`docs/theme.md`](./docs/theme.md)**.
+
+---
+
+## Conventions
+
+- **Theme lives in CSS.** Tailwind v4 has no `tailwind.config.*` — edit tokens inside the `@theme inline` block in `src/app/globals.css`. Tailwind emits `bg-*`, `text-*`, `border-*`, `ring-*`, etc. for every `--color-*` and `--font-*` automatically.
+- **Prefer semantic roles** (`bg-primary`, `text-muted-foreground`) in components over raw palette tokens. Drop to palette tokens only when a specific hue is the point (hero accents, glow blobs, decorative flourishes).
+- **Section components are self-contained.** Each section in `src/components/ui_components/home/` owns its own background, atmosphere layers, and padding so they can be reordered or removed without layout glue.
+- **Motion is atmospheric, not decorative.** Entrance animations use `animate-rise` with staggered `animationDelay` inline styles; ambient motion (`animate-float-y-slow`, `animate-glow-pulse`, `animate-pulse-dot`) stays slow and low-intensity.
+- **Mono for data, grotesk for narrative.** `font-mono` is reserved for spec labels, numeric readouts, and section markers (`[001]`, `[002]`, …); `font-sans` (default) is for display headlines and body prose.
+
+---
+
+## Docs
+
+- [`docs/theme.md`](./docs/theme.md) — design tokens, semantic roles, custom utilities, how to extend the theme.
