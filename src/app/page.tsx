@@ -1,8 +1,8 @@
-import Hero from "@/components/ui_components/home/hero";
-import Stats from "@/components/ui_components/home/stats";
-import Features from "@/components/ui_components/home/features";
-import Waitlist from "@/components/ui_components/home/waitlist";
-import Footer from "@/components/ui_components/home/footer";
+import Hero from "@/components/uiComponents/home/hero";
+import Stats from "@/components/uiComponents/home/stats";
+import Features from "@/components/uiComponents/home/features";
+import Waitlist from "@/components/uiComponents/home/waitlist";
+import Footer from "@/components/uiComponents/home/footer";
 
 export default function Home() {
   return (
