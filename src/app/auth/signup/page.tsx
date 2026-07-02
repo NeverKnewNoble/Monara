@@ -1,12 +1,56 @@
-import Link from "next/link";
-import { ArrowLeft, ArrowUpRight, Mail, Lock, User } from "lucide-react";
+"use client"
 
-const accountTypes = [
-  { value: "personal", label: "Personal" },
-  { value: "business", label: "Business" },
-];
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, ArrowUpRight, Mail, Lock, User } from "lucide-react";
+import {accountTypes} from "@/utils/signupUtils";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import Authentication from "@/services/authenticaition";
+import { useSnack } from "@/lib/snack";
 
 export default function SignupPage() {
+  const snack = useSnack();
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    if (success) {
+      setEmail("");
+      setName("");
+      setPassword("");
+    }
+  }, [success]);
+
+  // ** FUNCTION
+  const signUpClick = async () => {
+    if(!email || !name || !password){
+      return console.error("Please make provide the needed info: email, name, password")
+    }
+
+    try{
+      await Authentication.signupRequest({email, name, password});
+      snack.success("Signed up successfully")
+      setSuccess(true)
+      router.push("/portal")
+    }catch(err){
+      if (axios.isAxiosError(err) && err.response?.status === 409) {
+        snack.error("Account already exists")
+        console.error("Account already exists", err);
+        return;
+      }
+
+      snack.error("Unable to signup user, try again")
+      console.error("Unable to signup user, try again", err);
+    }
+  }
+
+
+
+
   return (
     <main className="relative flex min-h-screen flex-col overflow-hidden bg-background">
       <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-40" />
@@ -40,7 +84,7 @@ export default function SignupPage() {
         <div className="w-full max-w-md">
           <div className="animate-rise glow-peach rounded-4xl border border-border bg-card p-8 md:p-10">
             <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
-              <span className="text-primary">[auth]</span>
+              {/* <span className="text-primary">[auth]</span> */}
               <span className="h-px w-8 bg-bone-dim" />
               Create account
             </div> 
@@ -51,10 +95,10 @@ export default function SignupPage() {
               to <span className="text-primary">calm.</span>
             </h1>
 
-            <p className="mt-4 text-[14.5px] leading-relaxed text-muted-foreground">
+            {/* <p className="mt-4 text-[14.5px] leading-relaxed text-muted-foreground">
               Start tracking, budgeting and planning in under a minute.
               Personal, business, or both — we&apos;re calm with either.
-            </p>
+            </p> */}
 
             <form className="mt-10 space-y-6" action="#" method="post">
               <div>
@@ -70,6 +114,8 @@ export default function SignupPage() {
                   type="text"
                   name="name"
                   required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   autoComplete="name"
                   placeholder="Alex Okonkwo"
                   className="mt-3 w-full rounded-2xl border border-border bg-input px-5 py-3.5 font-mono text-[13.5px] text-foreground placeholder:text-bone-dim transition focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/25"
@@ -88,6 +134,8 @@ export default function SignupPage() {
                   id="email"
                   type="email"
                   name="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                   autoComplete="email"
                   placeholder="you@domain.com"
@@ -108,8 +156,10 @@ export default function SignupPage() {
                   type="password"
                   name="password"
                   required
+                  value={password}
+                  onChange={(e) => {setPassword(e.target.value)} }
                   minLength={8}
-                  autoComplete="new-password"
+                  // autoComplete="new-password"
                   placeholder="At least 8 characters"
                   className="mt-3 w-full rounded-2xl border border-border bg-input px-5 py-3.5 font-mono text-[13.5px] text-foreground placeholder:text-bone-dim transition focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/25"
                 />
@@ -138,9 +188,9 @@ export default function SignupPage() {
                     </label>
                   ))}
                 </div>
-                <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-bone-dim">
+                {/* <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-bone-dim">
                   You can add the other one later
-                </p>
+                </p> */}
               </div>
 
               <label className="flex items-start gap-3">
@@ -170,7 +220,8 @@ export default function SignupPage() {
               </label>
 
               <button
-                type="submit"
+                type="button"
+                onClick={signUpClick}
                 className="group glow-peach inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-[13.5px] font-semibold text-primary-foreground transition hover:-translate-y-0.5 hover:bg-primary-hover"
               >
                 Create account
@@ -181,7 +232,7 @@ export default function SignupPage() {
               </button>
             </form>
 
-            <div className="mt-10 flex items-center gap-4">
+            {/* <div className="mt-10 flex items-center gap-4">
               <span className="h-px flex-1 bg-border" />
               <span className="font-mono text-[9.5px] uppercase tracking-[0.25em] text-muted-foreground">
                 or
@@ -200,7 +251,7 @@ export default function SignupPage() {
                 />
               </svg>
               Sign up with Google
-            </button>
+            </button> */}
           </div>
 
           <p className="mt-8 text-center font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">

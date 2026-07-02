@@ -1,7 +1,36 @@
+'use client'
+
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, Mail, Lock } from "lucide-react";
+import  Authentication  from "@/services/authenticaition"
+import { useState } from "react";
+import { useSnack } from "@/lib/snack";
 
 export default function LoginPage() {
+  const snack = useSnack(); 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // ** FUNTIONS
+  const loginClick = async () => {
+    if(!email || !password) {
+      return console.error("Please make sure the email or password is provided")
+    }
+
+    try {
+      await Authentication.loginRequest({email, password})
+      console.log("Logged in successfully");
+      snack.success("Logged in successfully");
+    } catch(err) {
+      snack.error("Unable to login, try again")
+      return console.error(err, "Unable to login, try again")
+    }
+  }
+
+
+
+
+  
   return (
     <main className="relative flex min-h-screen flex-col overflow-hidden bg-background">
       <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-40" />
@@ -65,6 +94,8 @@ export default function LoginPage() {
                   type="email"
                   name="email"
                   required
+                  value={email}      
+                  onChange={(e) => {setEmail(e.target.value)}}
                   autoComplete="email"
                   placeholder="you@domain.com"
                   className="mt-3 w-full rounded-2xl border border-border bg-input px-5 py-3.5 font-mono text-[13.5px] text-foreground placeholder:text-bone-dim transition focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/25"
@@ -92,6 +123,8 @@ export default function LoginPage() {
                   type="password"
                   name="password"
                   required
+                  value={password}
+                  onChange={(e) => {setPassword(e.target.value)}}
                   autoComplete="current-password"
                   placeholder="••••••••••"
                   className="mt-3 w-full rounded-2xl border border-border bg-input px-5 py-3.5 font-mono text-[13.5px] text-foreground placeholder:text-bone-dim transition focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/25"
@@ -109,6 +142,7 @@ export default function LoginPage() {
 
               <button
                 type="submit"
+                onClick={loginClick}
                 className="group glow-peach inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-[13.5px] font-semibold text-primary-foreground transition hover:-translate-y-0.5 hover:bg-primary-hover"
               >
                 Sign in
@@ -119,7 +153,7 @@ export default function LoginPage() {
               </button>
             </form>
 
-            <div className="mt-10 flex items-center gap-4">
+            {/* <div className="mt-10 flex items-center gap-4">
               <span className="h-px flex-1 bg-border" />
               <span className="font-mono text-[9.5px] uppercase tracking-[0.25em] text-muted-foreground">
                 or
@@ -138,7 +172,7 @@ export default function LoginPage() {
                 />
               </svg>
               Continue with Google
-            </button>
+            </button> */}
           </div>
 
           <p className="mt-8 text-center font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">

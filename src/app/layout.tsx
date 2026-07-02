@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, IBM_Plex_Mono } from "next/font/google";
+import Providers from "@/components/Providers";
 import "./globals.css";
 
 const bricolage = Bricolage_Grotesque({
@@ -28,7 +29,9 @@ export default function RootLayout({
       lang="en"
       className={`${bricolage.variable} ${plexMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-night text-bone">{children}</body>
+      <body className="min-h-full flex flex-col bg-night text-bone">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
